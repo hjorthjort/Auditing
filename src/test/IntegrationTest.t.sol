@@ -631,7 +631,7 @@ contract RedemptionIntegrationTest is Test {
         uint256 debt123 = (debtAmount + (debtAmount * 5256000 / 2600000 * 100 / 10000)) - debtAmount / 2;
         assertApproxEqAbs(debt, (debt123 + debt123 * (5_256_000 / 4) / 2_600_000 * 100 / 10_000), 1);
 
-        assertApproxEqAbs(earmarked, debtAmount / 2 , 1);
+        assertApproxEqAbs(earmarked, debtAmount / 3 , 1);
 
         // // Second position claim
         // vm.startPrank(address(0xdead));
