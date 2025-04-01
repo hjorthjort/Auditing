@@ -843,32 +843,35 @@ contract AlchemistV3 is IAlchemistV3, Initializable {
         Account storage account = _accounts[tokenId];
         RedemptionInfo memory previousRedemption = _redemptions[lastRedemptionBlock];
 
-        uint256 debtFee = PositionDecay.ScaleByWeightDelta(account.debt, _feeWeight - account.lastAccruedFeeWeight);
 
-        uint256 debtToEarmark = PositionDecay.ScaleByWeightDelta(account.debt - account.earmarked, _earmarkWeight - account.lastAccruedEarmarkWeight);
-        
+        uint256 userDebtBalance = account.scaledDebt * debtFeeWeight / 1e27;
+        uint256 earmarked; 
+        if (scaledDebt * debtFeeWeight / 1e27 != 0) {
+            earmarked = (account.scaledDebt * debtFeeWeight / 1e27) * (setAsideEffective) / (scaledDebt * debtFeeWeight / 1e27);
+        }
+
         account.lastAccruedEarmarkWeight = _earmarkWeight;
-        account.earmarked += debtToEarmark;
+        account.earmarked = earmarked;
 
-        account.debt += debtFee;
+        account.debt = userDebtBalance;
         account.lastAccruedFeeWeight = _feeWeight;
 
-        uint256 earmarkToRedeem = PositionDecay.ScaleByWeightDelta(account.earmarked, _redemptionWeight - account.lastAccruedRedemptionWeight);
+        uint256 debtToEarmark = PositionDecay.ScaleByWeightDelta(account.debt - account.earmarked, _earmarkWeight - account.lastAccruedEarmarkWeight);
+        uint256 earmarkedCopy = account.earmarked + debtToEarmark;
+
+        uint256 earmarkToRedeem = PositionDecay.ScaleByWeightDelta(earmarkedCopy, _redemptionWeight - account.lastAccruedRedemptionWeight);
 
         // Recreate account state at last redemption block
         uint256 earmarkedCopyCopy;
         if (block.number > lastRedemptionBlock && _redemptionWeight != 0) {
             if (previousRedemption.debt != 0) {
-                uint256 debtToEarmark = PositionDecay.ScaleByWeightDelta(account.debt - account.earmarked, previousRedemption.earmarkWeight - account.lastAccruedEarmarkWeight);
-                earmarkedCopyCopy = account.earmarked + debtToEarmark;
+                uint256 debtToEarmarkCopy = PositionDecay.ScaleByWeightDelta(account.debt - account.earmarked, previousRedemption.earmarkWeight - account.lastAccruedEarmarkWeight);
+                earmarkedCopyCopy = account.earmarked + debtToEarmarkCopy;
             }
-
             earmarkToRedeem = PositionDecay.ScaleByWeightDelta(earmarkedCopyCopy, _redemptionWeight - account.lastAccruedRedemptionWeight);
         }
 
         // Calculate how much of user earmarked amount has been redeemed and subtract it
-        account.debt -= earmarkToRedeem;
-        account.earmarked -= earmarkToRedeem;
         account.lastAccruedRedemptionWeight = _redemptionWeight;
 
         // Redeem user collateral equal to value of debt tokens redeemed
@@ -889,7 +892,6 @@ contract AlchemistV3 is IAlchemistV3, Initializable {
 
             if (protocolFee > 0) {
                 uint256 debtForFee = (protocolFee * totalDebt / BPS) * (block.number - lastEarmarkBlock) / blocksPerYear;
-                _feeWeight += PositionDecay.WeightIncrement(debtForFee, totalDebt);
                 totalDebt += debtForFee;
 
                 debtFeeWeight = debtFeeWeight * (1e27 + ((protocolFee * 1e27 / BPS) * (block.number - lastEarmarkBlock) / blocksPerYear)) / 1e27;
