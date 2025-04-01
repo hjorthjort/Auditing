@@ -932,8 +932,6 @@ contract AlchemistV3 is IAlchemistV3, Initializable {
             earmarked = (account.scaledDebt * debtFeeWeightCopy / 1e27) * (setAsideEffective + amount) / (scaledDebt * debtFeeWeightCopy / 1e27);
         }
 
-        console.log((account.principle - (account.principle * principleWeight / 1e27)) * debtFeeWeight / 1e27);
-
         uint256 debtToEarmark = PositionDecay.ScaleByWeightDelta(account.debt - account.earmarked, earmarkWeightCopy - account.lastAccruedEarmarkWeight);
         uint256 earmarkedCopy = account.earmarked + debtToEarmark;
 
