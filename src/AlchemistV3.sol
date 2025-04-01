@@ -18,6 +18,8 @@ import {IPriceFeedAdapter} from "./adapters/ETHUSDPriceFeedAdapter.sol";
 
 import {console} from "../../lib/forge-std/src/console.sol";
 
+import {console} from "../../lib/forge-std/src/console.sol";
+
 /// @title  AlchemistV3
 /// @author Alchemix Finance
 contract AlchemistV3 is IAlchemistV3, Initializable {
