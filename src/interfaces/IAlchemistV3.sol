@@ -52,6 +52,8 @@ struct Account {
     uint256 lastAccruedRedemptionWeight;
 
     uint256 scaledDebt;
+    uint256 principle;
+    uint256 setAsideRaw;
 
     /// @notice allowances for minting alAssets, per version.
     mapping(uint256 => mapping(address => uint256)) mintAllowances;
