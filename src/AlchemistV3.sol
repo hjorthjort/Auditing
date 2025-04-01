@@ -35,9 +35,6 @@ contract AlchemistV3 is IAlchemistV3, Initializable {
 
     uint256 public constant FIXED_POINT_SCALAR = 1e18;
 
-    // Scaling factor to preserve precission with weighting
-    uint256 public constant WEIGHT_SCALING_FACTOR = 1e36;
-
     /// @inheritdoc IAlchemistV3State
     address public admin;
 
