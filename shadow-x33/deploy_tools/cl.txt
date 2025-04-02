@@ -1,0 +1,72 @@
+
+
+### DEPLOYMENT WITH ONLY CL POOLS
+1. 
+forge script scripts/foundry/firstDeployAccessHub.s.sol:FirstDeployAccessHub \
+--broadcast \
+--rpc-url $SONIC_RPC \
+--private-key $PRIVATE_KEY \
+--verify \
+--verifier-url $SONICSCAN_URL \
+--etherscan-api-key $SONICSCAN_API_KEY
+
+2. place accessHub address in `scripts/foundry/cl/core/config/mainnet.json`
+
+3.
+forge script scripts/foundry/cl/core/deployCLFull.sol:DeployCLFull \
+    --broadcast \
+    --rpc-url $SONIC_RPC \
+    --private-key $PRIVATE_KEY \
+    --verify \
+    --verifier-url $SONICSCAN_URL \
+    --etherscan-api-key $SONICSCAN_API_KEY
+
+4. place "WETH9", "accessHub" and "deployer" in `scripts/foundry/cl/periphery/config/mainnet.json`
+5. 
+forge script scripts/foundry/cl/periphery/deployPeripheryFull.sol:DeployPeripheryFull \
+    --broadcast \
+    --rpc-url $SONIC_RPC \
+    --private-key $PRIVATE_KEY \
+    --verify \
+    --verifier-url $SONICSCAN_URL \
+    --etherscan-api-key $SONICSCAN_API_KEY
+
+### propose accessHub upgrade
+forge script scripts/foundry/directAccessHubUpgrade.s.sol:DirectAccessHubUpgrade \
+--broadcast \
+--rpc-url $SONIC_RPC \
+--private-key $PRIVATE_KEY \
+--verify \
+--verifier-url $SONICSCAN_URL \
+--etherscan-api-key $SONICSCAN_API_KEY
+
+#### periphery stuff
+[MixedRouteQuoterV1]
+forge create contracts/CL/periphery/lens/MixedRouteQuoterV1.sol:MixedRouteQuoterV1 \
+--private-key $PRIVATE_KEY \
+--rpc-url $SONIC_RPC \
+--verify \
+--verifier-url $SONICSCAN_URL \
+--etherscan-api-key $SONICSCAN_API_KEY \
+--broadcast \
+--constructor-args 0xcD2d0637c94fe77C2896BbCBB174cefFb08DE6d7 0x2dA25E7446A70D7be65fd4c053948BEcAA6374c8
+
+[UniversalRouter]
+forge script test/gigasifu/deployUniversalRouter.s.sol:DeployUniversalRouter \
+--broadcast \
+--rpc-url $SONIC_RPC \
+--private-key $PRIVATE_KEY \
+--verify \
+--verifier-url $SONICSCAN_URL \
+--etherscan-api-key $SONICSCAN_API_KEY
+
+
+forge create contracts/AccessHub.sol:AccessHub \
+--private-key $PRIVATE_KEY \
+--rpc-url $SONIC_RPC \
+--verify \
+--verifier-url $SONICSCAN_URL \
+--etherscan-api-key $SONICSCAN_API_KEY \
+--broadcast
+
+

@@ -1,0 +1,8 @@
+{
+  "nonfungiblePositionManager": "0x5F477C5dfb9ed6C5E2923414B6A8Dc51C976f847",
+  "nonfungibleTokenPositionDescriptor": "0xf4D70014952Fef5d31bc6c1fD5a107813b33e4e1",
+  "quoter": "0x802BAb990BfA331918ec27F22A39F12DaA98a003",
+  "quoterV2": "0x1FA4BB87A2aaa865f6c575cf6Baa4586450eFA62",
+  "swapRouter": "0xe7d26Aec4F5c12B21608c192cC3bEa7099df99c2",
+  "tickLens": "0x0e347Ff8e0fC72aD1190B9ba6472F93DF7604715"
+}

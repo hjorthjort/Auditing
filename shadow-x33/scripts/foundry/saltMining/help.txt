@@ -1,0 +1,13 @@
+# DEPLOY CREATE2 TOKEN
+
+forge script scripts/foundry/saltMining/DeployCreate2Token.sol:DeployTokenCreate2 \
+--broadcast \
+--rpc-url $SONIC_RPC \
+--private-key $PRIVATE_KEY \
+--verify \
+--verifier-url $SONICSCAN_URL \
+--etherscan-api-key $SONICSCAN_API_KEY
+
+# GET INIT CODE
+forge script scripts/foundry/saltMining/GetInitCode.sol:GetInitCode 
+

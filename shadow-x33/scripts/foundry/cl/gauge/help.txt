@@ -1,0 +1,8 @@
+# deploy DeployGaugeFull
+forge script scripts/foundry/cl/gauge/DeployGaugeFull.sol:DeployGaugeFull \
+--private-key $PRIVATE_KEY \
+--rpc-url $SONIC_RPC \
+--verify \
+--verifier-url $SONICSCAN_URL \
+--etherscan-api-key $SONICSCAN_API_KEY \
+--broadcast
