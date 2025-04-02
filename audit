@@ -1,0 +1,165 @@
+#!/bin/bash
+
+set -exuo pipefail
+
+ARCHIVE_DIR="Archived"
+REMOTE_PREFIX="audit-remote-"
+TMP_REMOTE_PREFIX="audit-local-"
+
+mkdir -p "$ARCHIVE_DIR"
+
+function usage() {
+    cat <<EOF
+Usage:
+  ./audit add <name> <git-url> [branch]          Add a new repo as a subtree
+  ./audit pull <name> [branch]                   Pull updates into the subtree
+  ./audit archive <path> <client>                Move the subtree at <path> into Archived/<client>/
+  ./audit unarchive <name>                       Move Archived/<name> back to top-level
+  ./audit migrate <from path> <to path>          Migrate a local repo as a subtree
+  ./audit list                                   List all audit remotes
+  ./audit help                                   Show this help
+EOF
+}
+
+function audit_add() {
+    NAME="$1"
+    URL="$2"
+    BRANCH="${3:-main}"
+    REMOTE="${REMOTE_PREFIX}${NAME}"
+    PREFIX="${NAME}"
+
+    git remote add "$REMOTE" "$URL" || {
+        echo "Remote $REMOTE already exists."
+    }
+    git fetch "$REMOTE"
+    git subtree add --prefix="$PREFIX" "$REMOTE" "$BRANCH" --squash
+    echo "✅ Added $NAME -> $PREFIX"
+}
+
+function audit_pull() {
+    NAME="$1"
+    BRANCH="${2:-main}"
+    REMOTE="${REMOTE_PREFIX}${NAME}"
+    PREFIX="${NAME}"
+
+    git fetch "$REMOTE"
+    git subtree pull --prefix="$PREFIX" "$REMOTE" "$BRANCH" --squash
+    echo "🔄 Pulled latest into $PREFIX"
+}
+
+function audit_archive() {
+    NAME="$1"
+    CLIENT="$2"
+    SRC="${NAME}"
+    CLIENT_DIR=${ARCHIVE_DIR}/${CLIENT}
+    DEST="${CLIENT_DIR}/${NAME}"
+
+    if [ ! -d "$SRC" ]; then
+        echo "❌ Cannot archive: directory $SRC does not exist."
+        exit 1
+    fi
+
+    if [ ! -d "$CLIENT_DIR" ]; then
+        mkdir -p "$CLIENT_DIR"
+        echo "✅ Created new client dir $CLIENT_DIR"
+    fi
+
+    mkdir -p "$ARCHIVE_DIR"
+    git mv "$SRC" "$DEST"
+    git commit -m "📦 Archived $NAME → $DEST"
+
+    echo "✅ Archived $NAME → $DEST"
+}
+
+function audit_unarchive() {
+    NAME="$1"
+    SRC="${ARCHIVE_DIR}/${NAME}"
+    DEST="${NAME}"
+
+    if [ ! -d "$SRC" ]; then
+        echo "❌ Cannot unarchive: directory $SRC does not exist."
+        exit 1
+    fi
+
+    if [ -d "$DEST" ]; then
+        echo "❌ Cannot unarchive: destination $DEST already exists."
+        exit 1
+    fi
+
+    git mv "$SRC" "$DEST"
+    git commit -m "♻️ Unarchived $NAME → $DEST"
+    echo "✅ Unarchived $NAME → $DEST"
+}
+
+function audit_migrate() {
+    FROM_PATH="$1"
+    TO_PATH="$2"
+    ABS_FROM="$(cd "$FROM_PATH"; pwd)"
+    MONOREPO_ROOT="$(cd "$(dirname "$0")"; pwd)"  # Directory where this script lives
+
+    if [ ! -d "$ABS_FROM/.git" ]; then
+        echo "❌ $ABS_FROM is not a git repository."
+        exit 1
+    fi
+
+    NAME="$(basename "$TO_PATH")"
+    REMOTE="${REMOTE_PREFIX}${NAME}"
+
+    cd "$MONOREPO_ROOT"  # Ensure we run all git commands in the monorepo
+
+    # Add remote if it doesn't exist
+    if ! git remote get-url "$REMOTE" > /dev/null 2>&1; then
+        git remote add "$REMOTE" "$ABS_FROM"
+        echo "🔗 Added remote $REMOTE → $ABS_FROM"
+    else
+        echo "ℹ️ Remote $REMOTE already exists."
+    fi
+
+    git fetch "$REMOTE"
+
+    # Try to detect the default branch
+    BRANCH=$(git --git-dir="$ABS_FROM/.git" symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@')
+    BRANCH=${BRANCH:-main}
+
+    git subtree add --prefix="$TO_PATH" "$REMOTE" "$BRANCH" --squash
+    echo "🚚 Migrated $ABS_FROM → $TO_PATH using branch $BRANCH"
+}
+
+function audit_list() {
+    echo "📦 Audit remotes:"
+    git remote -v | grep "$REMOTE_PREFIX" || echo "None yet."
+}
+
+# Parse args
+CMD="$1"
+shift || true
+
+case "$CMD" in
+    add)
+        audit_add "$@"
+        ;;
+    pull)
+        audit_pull "$@"
+        ;;
+    archive)
+        audit_archive "$@"
+        ;;
+    unarchive)
+        audit_unarchive "$@"
+        ;;
+    migrate)
+        audit_migrate "$@"
+        ;;
+    list)
+        audit_list
+        ;;
+    help|--help|-h)
+        usage
+        ;;
+    *)
+        echo "Unknown command: $CMD"
+        usage
+        exit 1
+        ;;
+esac
+
