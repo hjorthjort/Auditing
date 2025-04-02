@@ -1,0 +1,7 @@
+bin/
+cache/
+dependencies/
+out/
+
+.vscode/
+.DS_Store
