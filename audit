@@ -2,6 +2,8 @@
 
 set -exo pipefail
 
+USE_SQUASH=0
+
 ARCHIVE_DIR="Archived"
 REMOTE_PREFIX="audit-remote-"
 TMP_REMOTE_PREFIX="audit-local-"
@@ -11,15 +13,26 @@ mkdir -p "$ARCHIVE_DIR"
 function usage() {
     cat <<EOF
 Usage:
-  ./audit add <name> <git-url> [branch]          Add a new repo as a subtree
-  ./audit pull <name> [branch]                   Pull updates into the subtree
-  ./audit archive <path> <client>                Move the subtree at <path> into Archived/<client>/
-  ./audit unarchive <name>                       Move Archived/<name> back to top-level
-  ./audit migrate <from path> <to path>          Migrate a local repo as a subtree
-  ./audit list                                   List all audit remotes
-  ./audit delete <name>                          Delete audit project and remote
-  ./audit help                                   Show this help
+  ./audit add <name> <git-url> [branch] [options] Add a new repo as a subtree
+  ./audit pull <name> [branch] [options]          Pull updates into the subtree
+  ./audit archive <path> <client>                 Move the subtree at <path> into Archived/<client>/
+  ./audit unarchive <name>                        Move Archived/<name> back to top-level
+  ./audit migrate <from path> <to path> [options] Migrate a local repo as a subtree
+  ./audit list                                    List all audit remotes
+  ./audit delete <name>                           Delete audit project and remote
+  ./audit help                                    Show this help
+
+options:
+  --squash   Squash commit history
 EOF
+}
+
+function parse_flags() {
+    for arg in "$@"; do
+        if [ "$arg" == "--squash" ]; then
+            USE_SQUASH=1
+        fi
+    done
 }
 
 function audit_add() {
@@ -32,8 +45,14 @@ function audit_add() {
     git remote add "$REMOTE" "$URL" || {
         echo "Remote $REMOTE already exists."
     }
+
+    ARGS=()
+    if [ "$USE_SQUASH" -eq 1 ]; then
+        ARGS+=(--squash)
+    fi
+
     git fetch "$REMOTE"
-    git subtree add --prefix="$PREFIX" "$REMOTE" "$BRANCH" --squash
+    git subtree add --prefix="$PREFIX" "$REMOTE" "$BRANCH" "${ARGS[@]}"
     echo "✅ Added $NAME -> $PREFIX"
 }
 
@@ -43,8 +62,13 @@ function audit_pull() {
     REMOTE="${REMOTE_PREFIX}${NAME}"
     PREFIX="${NAME}"
 
+    ARGS=()
+    if [ "$USE_SQUASH" -eq 1 ]; then
+        ARGS+=(--squash)
+    fi
+
     git fetch "$REMOTE"
-    git subtree pull --prefix="$PREFIX" "$REMOTE" "$BRANCH" --squash
+    git subtree pull --prefix="$PREFIX" "$REMOTE" "$BRANCH" "${ARGS[@]}"
     echo "🔄 Pulled latest into $PREFIX"
 }
 
@@ -121,7 +145,12 @@ function audit_migrate() {
     BRANCH=$(git --git-dir="$ABS_FROM/.git" --work-tree="$ABS_FROM" rev-parse --abbrev-ref HEAD 2>/dev/null)
     BRANCH=${BRANCH:-main}
 
-    git subtree add --prefix="$TO_PATH" "$REMOTE" "$BRANCH" --squash
+    ARGS=()
+    if [ "$USE_SQUASH" -eq 1 ]; then
+        ARGS+=(--squash)
+    fi
+
+    git subtree add --prefix="$TO_PATH" "$REMOTE" "$BRANCH" "${ARGS[@]}"
     echo "🚚 Migrated $ABS_FROM → $TO_PATH using branch $BRANCH"
 }
 
