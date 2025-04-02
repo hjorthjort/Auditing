@@ -17,6 +17,7 @@ Usage:
   ./audit unarchive <name>                       Move Archived/<name> back to top-level
   ./audit migrate <from path> <to path>          Migrate a local repo as a subtree
   ./audit list                                   List all audit remotes
+  ./audit delete <name>                          Delete audit project and remote
   ./audit help                                   Show this help
 EOF
 }
@@ -124,6 +125,27 @@ function audit_migrate() {
     echo "🚚 Migrated $ABS_FROM → $TO_PATH using branch $BRANCH"
 }
 
+function audit_delete() {
+    NAME="$1"
+    PATH_TO_DELETE="$NAME"
+    REMOTE="${REMOTE_PREFIX}${NAME}"
+
+    if [ ! -d "$PATH_TO_DELETE" ]; then
+        echo "❌ Cannot delete: $PATH_TO_DELETE does not exist."
+        exit 1
+    fi
+
+    git rm -r "$PATH_TO_DELETE"
+    git commit -m "🗑️ Removed audit $NAME"
+
+    if git remote get-url "$REMOTE" > /dev/null 2>&1; then
+        git remote remove "$REMOTE"
+        echo "🧹 Removed remote $REMOTE"
+    fi
+
+    echo "✅ Deleted audit $NAME"
+}
+
 function audit_list() {
     echo "📦 Audit remotes:"
     git remote -v | grep "$REMOTE_PREFIX" || echo "None yet."
@@ -151,6 +173,9 @@ case "$CMD" in
         ;;
     list)
         audit_list
+        ;;
+    delete)
+        audit_delete "$@"
         ;;
     help|--help|-h)
         usage
