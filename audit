@@ -95,7 +95,7 @@ function audit_migrate() {
     FROM_PATH="$1"
     TO_PATH="$2"
     ABS_FROM="$(cd "$FROM_PATH"; pwd)"
-    MONOREPO_ROOT="$(cd "$(dirname "$0")"; pwd)"  # Directory where this script lives
+    MONOREPO_ROOT="$(cd "$(dirname "$0")"; pwd)"
 
     if [ ! -d "$ABS_FROM/.git" ]; then
         echo "❌ $ABS_FROM is not a git repository."
@@ -105,9 +105,8 @@ function audit_migrate() {
     NAME="$(basename "$TO_PATH")"
     REMOTE="${REMOTE_PREFIX}${NAME}"
 
-    cd "$MONOREPO_ROOT"  # Ensure we run all git commands in the monorepo
+    cd "$MONOREPO_ROOT"
 
-    # Add remote if it doesn't exist
     if ! git remote get-url "$REMOTE" > /dev/null 2>&1; then
         git remote add "$REMOTE" "$ABS_FROM"
         echo "🔗 Added remote $REMOTE → $ABS_FROM"
@@ -117,8 +116,8 @@ function audit_migrate() {
 
     git fetch "$REMOTE"
 
-    # Try to detect the default branch
-    BRANCH=$(git --git-dir="$ABS_FROM/.git" symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@')
+    # Robust branch detection
+    BRANCH=$(git --git-dir="$ABS_FROM/.git" --work-tree="$ABS_FROM" rev-parse --abbrev-ref HEAD 2>/dev/null)
     BRANCH=${BRANCH:-main}
 
     git subtree add --prefix="$TO_PATH" "$REMOTE" "$BRANCH" --squash
