@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -exuo pipefail
+set -exo pipefail
 
 ARCHIVE_DIR="Archived"
 REMOTE_PREFIX="audit-remote-"
