@@ -1,0 +1,120 @@
+# DEPLOY NON CL
+
+ ##deploy individual contracts
+forge script scripts/foundry/non-cl/DeployIndividualContracts.sol:DeployIndividualContracts \
+--broadcast \
+--rpc-url $SONIC_RPC \
+--private-key $PRIVATE_KEY \
+--verify \
+--verifier-url $SONICSCAN_URL \
+--etherscan-api-key $SONICSCAN_API_KEY
+
+###deploy cl gauges
+forge script scripts/foundry/cl/gauge/DeployGaugeFull.sol:DeployGaugeFull \
+--broadcast \
+--rpc-url $SONIC_RPC \
+--private-key $PRIVATE_KEY \
+--verify \
+--verifier-url $SONICSCAN_URL \
+--etherscan-api-key $SONICSCAN_API_KEY
+
+
+# voter dependant contracts
+forge script scripts/foundry/non-cl/DeployVoterDependent.sol:DeployVoterDependent \
+--broadcast \
+--rpc-url $SONIC_RPC \
+--private-key $PRIVATE_KEY \
+--verify \
+--verifier-url $SONICSCAN_URL \
+--etherscan-api-key $SONICSCAN_API_KEY
+
+# verify GaugeV3
+forge verify-contract \
+0x0ac98Ce57D24f77F48161D12157cb815Af469fc0 \
+GaugeV3 \
+--verifier-url $SONICSCAN_URL \
+--etherscan-api-key $SONICSCAN_API_KEY \
+--constructor-args $(cast abi-encode "constructor(address,address,address,address)" 0x3aF1dD7A2755201F8e2D6dCDA1a61d9f54838f4f 0x12E66C8F215DdD5d48d150c8f46aD0c6fB0F4406 0xcc0365F8f453C55EA7471C9F89767928c8f8d27F 0x324963c267C354c7660Ce8CA3F5f167E05649970)
+
+# verify FeeDistributor
+forge verify-contract \
+0x13dF15372C892C83A1F10C1A12C5C5C00D649952 \
+FeeDistributor \
+--verifier-url $SONICSCAN_URL \
+--etherscan-api-key $SONICSCAN_API_KEY \
+--constructor-args $(cast abi-encode "constructor(address,address)" 0x3aF1dD7A2755201F8e2D6dCDA1a61d9f54838f4f 0xcc0365F8f453C55EA7471C9F89767928c8f8d27F)
+
+
+# verify FeeRecipient
+forge verify-contract \
+0xB9b20d182d29F7769fa7805B8d7F648f2825386B \
+FeeRecipient \
+--verifier-url $SONICSCAN_URL \
+--etherscan-api-key $SONICSCAN_API_KEY \
+--constructor-args $(cast abi-encode "constructor(address,address,address)" 0xF19748a0E269c6965a84f8C98ca8C47A064D4dd0 0x3aF1dD7A2755201F8e2D6dCDA1a61d9f54838f4f 0x5712bD693aC758158146aa151F31BD74CFBF37c1) \
+--optimizer-runs 200
+
+# verify Gauge
+forge verify-contract \
+0xCBcAd939E2bbbe01850A141F204f25DF63b8FC5B \
+Gauge \
+--verifier-url $SONICSCAN_URL \
+--etherscan-api-key $SONICSCAN_API_KEY \
+--constructor-args $(cast abi-encode "constructor(address,address)" 0xF19748a0E269c6965a84f8C98ca8C47A064D4dd0 0x3af1dd7a2755201f8e2d6dcda1a61d9f54838f4f)
+
+# verify Pair
+forge verify-contract \
+0xF19748a0E269c6965a84f8C98ca8C47A064D4dd0 \
+Pair \
+--verifier-url $SONICSCAN_URL \
+--etherscan-api-key $SONICSCAN_API_KEY
+
+
+# deploy Shadrop
+forge create contracts/airdrop/Shadrop.sol:Shadrop \
+--private-key $PRIVATE_KEY \
+--rpc-url $SONIC_RPC \
+--broadcast \
+--verify \
+--verifier-url $SONICSCAN_URL \
+--etherscan-api-key $SONICSCAN_API_KEY \
+--constructor-args 0x07712D748c40608810A0305751E35f0EeDEF70d2
+
+# deploy AutomatedFeeNotifier
+forge create contracts/helpers/AutomatedFeeNotifier.sol:AutomatedFeeNotifier \
+--private-key $PRIVATE_KEY \
+--rpc-url $SONIC_RPC \
+--broadcast \
+--verify \
+--verifier-url $SONICSCAN_URL \
+--etherscan-api-key $SONICSCAN_API_KEY \
+--constructor-args 0x3aF1dD7A2755201F8e2D6dCDA1a61d9f54838f4f 0xcc0365F8f453C55EA7471C9F89767928c8f8d27F
+
+
+
+# deploy RewardClaimers2
+forge create contracts/CL/periphery/RewardClaimers2.sol:RewardClaimers2 \
+--private-key $PRIVATE_KEY \
+--rpc-url $SONIC_RPC \
+--verify \
+--verifier-url $SONICSCAN_URL \
+--etherscan-api-key $SONICSCAN_API_KEY \
+--broadcast \
+--constructor-args 0x1D368773735ee1E678950B7A97bcA2CafB330CDc 0x5e7A9eea6988063A4dBb9CcDDB3E04C923E8E37f  0xcD2d0637c94fe77C2896BbCBB174cefFb08DE6d7 0x12E66C8F215DdD5d48d150c8f46aD0c6fB0F4406 0x3aF1dD7A2755201F8e2D6dCDA1a61d9f54838f4f 0x5050bc082FF4A74Fb6B0B04385dEfdDB114b2424 0x3333b97138D4b086720b5aE8A7844b1345a33333
+
+# deploy Gems
+forge create contracts/Gems.sol:Gems \
+--private-key $PRIVATE_KEY \
+--rpc-url $SONIC_RPC \
+--broadcast \
+--verify \
+--verifier-url $SONICSCAN_URL \
+--etherscan-api-key $SONICSCAN_API_KEY \
+--constructor-args 0x5e7A9eea6988063A4dBb9CcDDB3E04C923E8E37f
+
+# deploy DustSwapper
+forge create contracts/CL/core/DustSwapper.sol:DustSwapper \
+--private-key $PRIVATE_KEY_VEINTICUATRO \
+--rpc-url $SONIC_RPC \
+--broadcast \
+--constructor-args 0x3aF1dD7A2755201F8e2D6dCDA1a61d9f54838f4f

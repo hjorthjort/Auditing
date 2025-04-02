@@ -1,0 +1,14 @@
+{
+    "timelock": "0xa3b6D98cd7aE8CA9d86bD8841faDD54e48fF9b20",
+    "treasury": "0xCAfc58De1E6A071790eFbB6B83b35397023E1544",
+    "operator": "0xCAfc58De1E6A071790eFbB6B83b35397023E1544",
+    "weth": "0x039e2fB66102314Ce7b64Ce5Ce3E5183bc94aD38",
+    "shadowV3PoolFactory": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+    "feeCollector": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+    "msig": "0xCAfc58De1E6A071790eFbB6B83b35397023E1544",
+    "clFactory": "0xfD3bd3Cfcbc9d12eCF5D0620764BD1885aA5ad46",
+    "clGaugeFactory": "0x00daa9a2d88bed5a29a6ca93e0b7d860cd1d403f",
+    "nfpManager": "0x3367060bAAb3321cea1e26f818bfc270a4937ee6",
+    "initialWeeklyEmissions": "100000000000",
+    "initialMultiplier": "1000000000000"
+}

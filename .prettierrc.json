@@ -1,0 +1,22 @@
+{
+    "plugins": ["prettier-plugin-solidity"],
+    "overrides": [
+      {
+        "files": "contracts/v2/libraries/**/*.sol",
+        "options": {
+          "semi": true,
+          "singleQuote": true,
+          "printWidth": 120
+        }
+      },
+      {
+        "files": "contracts/v2-periphery/*/**/*.sol",
+        "options": {
+          "semi": true,
+          "singleQuote": true,
+          "printWidth": 120
+        }
+      }
+    ]
+  }
+  

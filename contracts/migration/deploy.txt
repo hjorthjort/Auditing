@@ -1,0 +1,35 @@
+# deploy sender
+forge script contracts/migration/DeploySender.sol:DeploySender \
+    --rpc-url $FANTOM_RPC_URL \
+    --private-key $PRIVATE_KEY \
+    --verify \
+    --verifier-url $FTMSCAN_URL \
+    --etherscan-api-key $FTMSCAN_API_KEY \
+    --broadcast
+
+# deploy receiver
+forge script contracts/migration/DeployReceiver.sol:DeployReceiver \
+    --rpc-url $SONIC_RPC \
+    --private-key $PRIVATE_KEY \
+    --verify \
+    --verifier-url $SONICSCAN_URL \
+    --etherscan-api-key $SONICSCAN_API_KEY \
+    --broadcast
+
+# configure sender
+forge script contracts/migration/ConfigureSender.sol:ConfigureSender \
+    --rpc-url $FANTOM_RPC_URL \
+    --private-key $PRIVATE_KEY \
+    --verify \
+    --verifier-url $FTMSCAN_URL \
+    --etherscan-api-key $FTMSCAN_API_KEY \
+    --broadcast
+
+# configure receiver
+forge script contracts/migration/ConfigureReceiver.sol:ConfigureReceiver \
+    --rpc-url $SONIC_RPC \
+    --private-key $PRIVATE_KEY \
+    --verify \
+    --verifier-url $SONICSCAN_URL \
+    --etherscan-api-key $SONICSCAN_API_KEY \
+    --broadcast
