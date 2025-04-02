@@ -1,0 +1,41 @@
+[[dependencies]]
+name = "@openzeppelin-contracts"
+version = "5.1.0"
+url = "https://soldeer-revisions.s3.amazonaws.com/@openzeppelin-contracts/5_1_0_19-10-2024_10:28:52_contracts.zip"
+checksum = "fd3d1ea561cb27897008aee18ada6e85f248eb161c86e4435272fc2b5777574f"
+integrity = "cb6cf6e878f2943b2291d5636a9d72ac51d43d8135896ceb6cf88d36c386f212"
+
+[[dependencies]]
+name = "@openzeppelin-contracts-upgradeable"
+version = "5.1.0"
+url = "https://soldeer-revisions.s3.amazonaws.com/@openzeppelin-contracts-upgradeable/5_1_0_19-10-2024_10:28:58_contracts-upgradeable.zip"
+checksum = "87854223d14941d6fda3d78d900217e79e25755ea5bc48beca035766fa6a4e7e"
+integrity = "826fb621339dcee4261f848b283ec86364743d3c289d61f621747d95e315215a"
+
+[[dependencies]]
+name = "erc6551-reference"
+version = "0.3.1"
+url = "https://soldeer-revisions.s3.amazonaws.com/erc6551-reference/0_3_1_20-09-2024_13:53:07_erc6551-reference-0.3.zip"
+checksum = "756263e4610ae351d40dc8b257fe9171e45e501064b0a1ac29b1d9e57381d504"
+integrity = "016e8894e6206c85c24bf86a1166820cd1d03098136465fed328ca6cc3ac0d82"
+
+[[dependencies]]
+name = "eth-infinitism-account-abstraction"
+version = "0.7"
+url = "https://soldeer-revisions.s3.amazonaws.com/eth-infinitism-account-abstraction/0_7_29-06-2024_08:28:06_eth-infinitism-account-abstraction-0.7.zip"
+checksum = "c102194147224fa5081c78c88af01ee148ea7d799990d98ebbe043c3fc168006"
+integrity = "5a359d8124f0fc9a454310d86b10f3eff96d4d1d0090bcdd85af9ba3a92d030b"
+
+[[dependencies]]
+name = "forge-std"
+version = "1.9.4"
+url = "https://soldeer-revisions.s3.amazonaws.com/forge-std/1_9_4_25-10-2024_14:36:59_forge-std-1.9.zip"
+checksum = "b5be24beb5e4dab5e42221b2ad1288b64c826bee5ee71b6159ba93ffe86f14d4"
+integrity = "3874463846ab995a6a9a88412913cacec6144f7605daa1af57c2d8bf3f210b13"
+
+[[dependencies]]
+name = "safe-global-safe-smart-account"
+version = "1.4.1-3"
+url = "https://soldeer-revisions.s3.amazonaws.com/safe-global-safe-smart-account/1_4_1-3_04-10-2024_19:23:24_safe-global-safe-smart-account-1.4.zip"
+checksum = "c1a19ae2fbc8448d24b1f561f7f93072edf0b628b6acfc46369043131fd4ba93"
+integrity = "036adada50297472c6d8361056a7c8617f28013cb1989b37b389184cd3ca5336"
